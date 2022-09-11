@@ -1,6 +1,8 @@
 import hashlib
-import random
+import os
+import sys
 import string
+import random
 
 def hash_collision(k):
     if not isinstance(k,int):
@@ -12,18 +14,14 @@ def hash_collision(k):
    
     #Collision finding code goes here
     x = ''.join(random.choices(string.ascii_uppercase + string.digits, k=16))
-    sha = hashlib.sha256(string.encode())
-    sha = int(sha.hexdigest(), base=16)
-    xBitString = format(sha, 'b')
+    xBitString = get_hash_bit_string(x)
     hashes = { x: xBitString }
     y = b'\x00'
 
     while True:
         y = ''.join(random.choices(string.ascii_uppercase + string.digits, k=16))
 
-        sha = hashlib.sha256(string.encode())
-        sha = int(sha.hexdigest(), base=16)
-        yBitString = format(sha, 'b')
+        yBitString = get_hash_bit_string(y)
         yBitStringLength = len(yBitString)
         yBits = yBitString[yBitStringLength - k:]
 
@@ -34,3 +32,9 @@ def hash_collision(k):
                 return str.encode('utf-8'), y.encode('utf-8')
 
         hashes[y] = yBitString
+
+    
+def get_hash_bit_string(string):
+    sha = hashlib.sha256(string.encode())
+    sha = int(sha.hexdigest(), base=16)
+    return format(sha, 'b')
